@@ -1,0 +1,7 @@
+name: SpawnElytra
+version: '${project.version}'
+main: ch.hekates.koalicraft.Koalicraft
+api-version: 1.18
+authors: [ Hekates ]
+description: Spawn Elytra for the KoaliCRAFT SMP.
+website: http://koalicraft.eu
