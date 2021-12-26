@@ -74,6 +74,7 @@ public class SpawnElytraListener implements Listener {
 
     @EventHandler
     public void onSwap(PlayerSwapHandItemsEvent event) {
+        if (!event.getPlayer().isGliding()) return;
         if (boosts >= maxBoosts) return;
         if (boosted.contains(event.getPlayer())) return;
         event.setCancelled(true);
@@ -81,14 +82,15 @@ public class SpawnElytraListener implements Listener {
         boosts ++;
         if (boosts >= maxBoosts) {
             event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cDu hast alle deine Boosts aufgebraucht! (" + boosts + "/" + maxBoosts + ")"));
+            giveBoost(event.getPlayer(), multiplyValue);
         } else {
             event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("Du kannst dich in 10 Sekunden erneut boosten. " + boosts + "/" + maxBoosts));
-        }
-        event.getPlayer().setVelocity(event.getPlayer().getLocation().getDirection().multiply(multiplyValue));
-        Bukkit.getScheduler().runTaskLater(Koalicraft.getPlugin(Koalicraft.class), () -> {
-            boosted.remove(event.getPlayer());
+            giveBoost(event.getPlayer(), multiplyValue);
+            Bukkit.getScheduler().runTaskLater(Koalicraft.getPlugin(Koalicraft.class), () -> {
+                boosted.remove(event.getPlayer());
 
-        }, 200);
+            }, 200);
+        }
     }
 
     @EventHandler
@@ -99,5 +101,11 @@ public class SpawnElytraListener implements Listener {
     private boolean isInSpawnRadius(Player player){
         if (!player.getWorld().getName().equals("world")) return false;
         return player.getWorld().getSpawnLocation().distance(player.getLocation()) <= spawnRadius;
+    }
+
+    private static void giveBoost(Player player, int amount){
+
+        player.setVelocity(player.getLocation().getDirection().multiply(amount));
+
     }
 }
